@@ -1,6 +1,19 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { signInMutation, personQuery, versionQuery } from './queries/queries.js';
+import {
+    signInMutation,
+    personQuery,
+    versionQuery,
+    layoutQuery,
+    eagerProgramHeadersQuery,
+    programRulesQuery,
+    userNotificationsQuery,
+    statsQuery,
+    studyPlanRulesQuery,
+    markActivityCompleteMutation,
+    studyPlanQuery,
+    eagerStudyPlanQuery,
+} from './queries/queries.js';
 
 export let options = {
     vus: 1, // Number of virtual users
@@ -43,7 +56,7 @@ export function setup() {
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         });
 
-        console.log('person query response:', personRes.body);
+        //console.log('person query response:', personRes.body);
 
         check(personRes, { 'person query status is 200': (r) => r.status === 200 });
         if (personRes.status === 200) {
@@ -74,7 +87,6 @@ export default function (data) {
         console.error('Missing token or programId');
         return;
     }
-
     // Run the curl command equivalent using the token from setup
     let curlRes = http.post(`${BASE_URL}/graphql`, JSON.stringify([{ query: versionQuery }]), {
         headers: {
@@ -88,4 +100,89 @@ export default function (data) {
     check(curlRes, { 'curl query status is 200': (r) => r.status === 200 });
 
     sleep(1); // Wait for 1 second before the next iteration
+
+    // Simulate clicking on a Program
+    function clickProgram() {
+        const responses = http.batch([
+            [
+                'POST',
+                `${BASE_URL}/graphql`,
+                JSON.stringify({ query: layoutQuery, variables: { programId } }),
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            ],
+            [
+                'POST',
+                `${BASE_URL}/graphql`,
+                JSON.stringify({ query: eagerProgramHeadersQuery, variables: { programId } }),
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            ],
+            [
+                'POST',
+                `${BASE_URL}/graphql`,
+                JSON.stringify({ query: programRulesQuery, variables: { programId } }),
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            ],
+            [
+                'POST',
+                `${BASE_URL}/graphql`,
+                JSON.stringify({ query: userNotificationsQuery }),
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            ],
+            [
+                'POST',
+                `${BASE_URL}/graphql`,
+                JSON.stringify({ query: statsQuery, variables: { programId } }),
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            ],
+            [
+                'POST',
+                `${BASE_URL}/graphql`,
+                JSON.stringify({ query: studyPlanRulesQuery, variables: { programId } }),
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            ],
+        ]);
+
+        check(responses, {
+            'layout query status is 200': (r) => r[0].status === 200,
+            'eager program headers query status is 200': (r) => r[1].status === 200,
+            'program rules query status is 200': (r) => r[2].status === 200,
+            'user notifications query status is 200': (r) => r[3].status === 200,
+            'stats query status is 200': (r) => r[4].status === 200,
+            'study plan rules query status is 200': (r) => r[5].status === 200,
+        }) || errorRate.add(1);
+    }
+
+    // Simulate user actions
+    clickProgram();
+    sleep(1); // Wait for 1 second before the next action
 }
