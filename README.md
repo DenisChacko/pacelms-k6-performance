@@ -1,46 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>k6 Load Testing README</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 20px;
-        }
-        h1, h2, h3 {
-            color: #2c3e50;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        code {
-            font-family: monospace;
-            background-color: #f4f4f4;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        .highlight {
-            background-color: #e7f3fe;
-            border-left: 4px solid #2196F3;
-            padding: 10px;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        ul li {
-            padding: 5px 0;
-        }
-    </style>
-</head>
 <body>
-
 <h2>
     <details open="open">
         <summary class="normal">Table of Contents</summary>
