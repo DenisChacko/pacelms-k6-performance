@@ -10,7 +10,7 @@ node_modules/
 
 # K6 test result files
 *.junit.xml
-*.js
+
 
 # Logs
 logs/
@@ -27,8 +27,7 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
-# Environment variables file
-.env
+#
 
 # NPM/Yarn lock files
 package-lock.json
@@ -65,5 +64,4 @@ coverage/
 # Dependency directories
 jspm_packages/
 
-# TypeScript cache
-*.ts
+
